@@ -3,6 +3,7 @@ package lab.info.com.finance.model.entity;
 import jakarta.persistence.*;
 import lab.info.com.finance.model.enums.StatusLancamento;
 import lab.info.com.finance.model.enums.TipoLancamento;
+import lombok.Builder;
 import lombok.Data;
 import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
 
@@ -12,6 +13,7 @@ import java.time.LocalDate;
 @Entity
 @Table(name = "lancamento", schema = "fin")
 @Data
+@Builder
 public class Lancamento {
 
     @Id
