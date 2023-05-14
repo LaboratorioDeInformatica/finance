@@ -3,8 +3,10 @@ package lab.info.com.finance.model.entity;
 import jakarta.persistence.*;
 import lab.info.com.finance.model.enums.StatusLancamento;
 import lab.info.com.finance.model.enums.TipoLancamento;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
 
 import java.math.BigDecimal;
@@ -14,6 +16,8 @@ import java.time.LocalDate;
 @Table(name = "lancamento", schema = "fin")
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Lancamento {
 
     @Id

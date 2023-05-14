@@ -3,6 +3,7 @@ package lab.info.com.finance.service;
 import lab.info.com.finance.model.entity.Lancamento;
 import lab.info.com.finance.model.enums.StatusLancamento;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface LancamentoService {
@@ -12,13 +13,13 @@ public interface LancamentoService {
     void deletar(Lancamento lancamento);
 
     List<Lancamento> buscar(Lancamento lancamentoFiltro);
-    void atualizarStatus(Lancamento lancamento,  StatusLancamento status);
+    Lancamento atualizarStatus(Lancamento lancamento,  StatusLancamento status);
 
     void validar(Lancamento lancamento);
 
     java.util.Optional<Lancamento> obterPorId(Long id);
 
-    double obterSaldoPorUsuario(Long id);
+    BigDecimal obterSaldoPorUsuario(Long id);
 
 
 

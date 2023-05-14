@@ -3,6 +3,7 @@ package lab.info.com.finance.service.impl;
 import lab.info.com.finance.exceptions.RegraNegocioException;
 import lab.info.com.finance.model.entity.Lancamento;
 import lab.info.com.finance.model.enums.StatusLancamento;
+import lab.info.com.finance.model.enums.TipoLancamento;
 import lab.info.com.finance.model.repository.LancamentoRepository;
 import lab.info.com.finance.service.LancamentoService;
 import org.springframework.data.domain.Example;
@@ -11,6 +12,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -27,8 +30,10 @@ public class LancamentoServiceImpl implements LancamentoService {
     @Override
     @Transactional
     public Lancamento salvar(Lancamento lancamento) {
+
         validar(lancamento);
         lancamento.setStatus(StatusLancamento.PENDENTE);
+        lancamento.setDataCadastro( LocalDate.now());
         return lancamentoRepository.save(lancamento);
     }
 
@@ -36,6 +41,7 @@ public class LancamentoServiceImpl implements LancamentoService {
     @Transactional
     public Lancamento atualizar(Lancamento lancamento) {
         validar(lancamento);
+        lancamento.setDataCadastro( LocalDate.now());
         Objects.requireNonNull(lancamento.getId());
         return lancamentoRepository.save(lancamento);
     }
@@ -56,9 +62,9 @@ public class LancamentoServiceImpl implements LancamentoService {
     }
 
     @Override
-    public void atualizarStatus(Lancamento lancamento, StatusLancamento status) {
+    public Lancamento atualizarStatus(Lancamento lancamento, StatusLancamento status) {
         lancamento.setStatus(status);
-        atualizar(lancamento);
+       return atualizar(lancamento);
     }
 
     @Override
@@ -91,11 +97,23 @@ public class LancamentoServiceImpl implements LancamentoService {
 
     @Override
     public Optional<Lancamento> obterPorId(Long id) {
-        return Optional.empty();
+        return lancamentoRepository.findById(id);
     }
 
     @Override
-    public double obterSaldoPorUsuario(Long id) {
-        return 0;
+    @Transactional(readOnly = true)
+    public BigDecimal obterSaldoPorUsuario(Long id) {
+        BigDecimal receitas = lancamentoRepository.obterSaldoPorUsuario(id, TipoLancamento.RECEITA);
+        BigDecimal despesas = lancamentoRepository.obterSaldoPorUsuario(id, TipoLancamento.DESPESA);
+
+        if(receitas == null){
+            receitas = BigDecimal.ZERO;
+        }
+
+        if(despesas == null){
+            despesas = BigDecimal.ZERO;
+        }
+
+        return receitas.subtract(despesas);
     }
 }
