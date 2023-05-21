@@ -40,6 +40,7 @@ public class LancamentoServiceImpl implements LancamentoService {
     @Override
     @Transactional
     public Lancamento atualizar(Lancamento lancamento) {
+        Objects.requireNonNull(lancamento.getId());
         validar(lancamento);
         lancamento.setDataCadastro( LocalDate.now());
         Objects.requireNonNull(lancamento.getId());
