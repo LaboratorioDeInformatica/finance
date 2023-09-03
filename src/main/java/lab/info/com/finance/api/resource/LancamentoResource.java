@@ -36,7 +36,7 @@ public class LancamentoResource {
         }
     }
 
-    @PutMapping("{id}")
+    @PutMapping("/{id}")
     public ResponseEntity atualizar(@PathVariable Long id, @RequestBody LancamentoDTO dto){
         try {
             Lancamento lancamento = service.obterPorId(id)
@@ -56,13 +56,15 @@ public class LancamentoResource {
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity deletar(@PathVariable Long id){
+    public ResponseEntity<?> deletar(@PathVariable Long id) {
         try {
             Lancamento lancamento = service.obterPorId(id)
                     .orElseThrow(() -> new RegraNegocioException("Lancamento não encontrado na base de dados"));
             service.deletar(lancamento);
-            return new ResponseEntity(HttpStatus.NO_CONTENT);
-        }catch (Exception e) {
+            return ResponseEntity.noContent().build();
+        } catch (RegraNegocioException e) {
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
@@ -138,5 +140,25 @@ public class LancamentoResource {
                 .build();
     }
 
+    @GetMapping("{id}")
+    public ResponseEntity obterLancamentoPorId(@PathVariable("id") Long id){
+        return service.obterPorId(id)
+                .map( lancamento -> new ResponseEntity(converter(lancamento), HttpStatus.OK))
+                .orElseGet( () -> new ResponseEntity(HttpStatus.NOT_FOUND));
+    }
+
+    private LancamentoDTO converter(Lancamento lancamento) {
+        return LancamentoDTO.builder()
+                .id(lancamento.getId())
+                .descricao(lancamento.getDescricao())
+                .mes(lancamento.getMes())
+                .ano(lancamento.getAno())
+                .valor(lancamento.getValor())
+                .usuario(lancamento.getUsuario().getId())
+                .status(lancamento.getStatus())
+                .tipo(lancamento.getTipo())
+                .usuario(lancamento.getUsuario().getId())
+                .build();
+    }
 
 }

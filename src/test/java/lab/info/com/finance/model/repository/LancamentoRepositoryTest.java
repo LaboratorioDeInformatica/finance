@@ -100,7 +100,7 @@ public class LancamentoRepositoryTest {
         lancamento.setUsuario(usuario);
         entityManager.persist(lancamento);
         //acao
-        BigDecimal saldo = repository.obterSaldoPorUsuario(lancamento.getUsuario().getId(), TipoLancamento.DESPESA);
+        BigDecimal saldo = repository.obterSaldoPorUsuario(lancamento.getUsuario().getId(), TipoLancamento.DESPESA, StatusLancamento.EFETIVADO);
         //verificacao
         Assertions.assertThat(saldo).isEqualTo(BigDecimal.valueOf(10,2));
     }
